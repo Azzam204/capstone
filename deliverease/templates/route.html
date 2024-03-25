@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+
+<nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color: #7d7b9e;">
+    <a class="navbar-brand m-3" href="/">DeliverEase</a>
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link float-end" href="/logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<h1 class="display-3">{{route.name.capitalize()}}
+</h1>
+<table class="table table-dark mt-3">
+    <thead>
+        <th>Time</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for stop in route.stops %}
+        <tr>
+            <td>{{stop.start_time.strftime('%I:%M %p')}}-{{stop.end_time.strftime('%I:%M %p')}}</td>
+            <td>{{stop.customer.first_name.capitalize()}} {{stop.customer.last_name.capitalize()}}</td>
+            <td>{{stop.customer.phone}}</td>
+            <td>{{stop.customer.address.capitalize()}}</td>
+            <td>
+                <form action="/route/{{route.id}}/{{stop.id}}" method="post">
+                    <button type="submit" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z">
+                            </path>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="/customers" class="btn btn-secondary btn-sm float-end">Add Stop</a>
+</div>
+
+{% endblock %}

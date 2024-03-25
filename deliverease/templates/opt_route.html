@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+
+<nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color: #7d7b9e;">
+    <a class="navbar-brand m-3" href="/">DeliverEase</a>
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link float-end m-3" href="/logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<div class="driver-route w-auto">
+    <h1 class="display-3">{{route.name.capitalize()}} optimized
+    </h1>
+    <table class="table table-dark mt-3">
+        <thead>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Status</th>
+        </thead>
+        <tbody>
+            {% for stop in opt_route %}
+            <tr>
+                <td>{{stop[0].customer.first_name.capitalize()}} {{stop[0].customer.last_name.capitalize()}}</td>
+                <td>{{stop[0].customer.phone}}</td>
+                <td>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{stop[0].customer.address}}&destination_place_id={{stop[1]}}&travelmode=driving&dir_action=navigate" target="_blank" rel="noopener noreferrer">{{stop[0].customer.address.capitalize()}}</a>
+                </td>
+                <td>
+                    <form action="/select/status/{{stop[0].id}}" class="input-group" method="post">
+                        <select class="form-select" name="status" id="status" onchange="this.form.submit()">
+                            <option class="" value="" disabled selected >{{stop[0].status.capitalize()}}</option>
+                            <option value="incomplete">Incomplete</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

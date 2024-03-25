@@ -1,0 +1,4 @@
+venv/
+__pycache__/
+v2deliverease/
+secret.py

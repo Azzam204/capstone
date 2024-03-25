@@ -1,0 +1,290 @@
+{% extends 'nav.html' %}
+
+{% block content %}
+
+<!-- route table  -->
+<div class="routes-wrap wrap">
+    <h1 class="display-3">Routes
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <table class="table table-dark mt-3">
+        <thead>
+            <th>Area</th>
+            <th>Stops</th>
+            <th>Driver</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for route in routes %}
+            <tr>
+                <td><a href="/route/{{route.id}}" style="color: wheat;">{{route.name.capitalize()}}</a></td>
+                <td>{{route.stops|length}}</td>
+                <td>
+                    <form class="input-group" action="/select/driver/{{route.id}}" method="post">
+                        <select  class="form-select" name="driver" id="driver" onchange="this.form.submit()">
+                            {% if route.driver[0] %}
+                            <option value="" disabled selected>{{route.driver[0].first_name.capitalize()}}</option>
+                            {% else %}
+                            <option value="" disabled selected></option>             
+                            {% endif %}
+
+                            {% for driver in drivers %}
+                            <option value="{{driver.id}}">{{driver.first_name.capitalize()}}</option>
+                            {% endfor %}
+                            <option value="">None</option>
+                        </select>
+                    </form>
+                </td>
+                <td>
+                    <form class="d-flex justify-content-center" action="/delete/Route/{{route.id}}" method="post">
+                        <button type="submit" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z">
+                                </path>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button class="btn btn-secondary add btn-sm float-end">Add Route</button>
+</div>
+
+<!-- route form -->
+<div class="route-form wrap">
+    <h1 class="display-6">Add a route
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <form action="/create/route" method="POST">
+
+        {{ route_form.hidden_tag() }}
+      
+        {% for field in route_form
+          if field.widget.input_type != 'hidden' %}
+        <p>
+          {{ field.label }}
+          {{ field(class_="form-control") }}
+      
+          {% for error in field.errors %}
+          <span class="form-text text-danger">{{ error }}</span>
+          {% endfor %}
+        </p>
+        {% endfor %}
+      
+        <button class="btn btn-success float-end" type="submit">Add</button>
+      
+      </form>
+</div>
+
+<!-- stops table  -->
+<div class="stops-wrap wrap">
+    <h1 class="display-3">Stops
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <table class="table table-dark mt-3">
+        <thead>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Route</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for stop in stops %}
+            <tr>
+                <td>{{stop.customer.first_name.capitalize()}} {{stop.customer.last_name.capitalize()}}</td>
+                <td>{{stop.customer.phone}}</td>
+                <td>{{stop.customer.address.capitalize()}}</td>
+                <td>
+                    <form class="input-group" action="/select/route/{{stop.id}}" method="post">
+                        <select  class="form-select" name="route" id="route" onchange="this.form.submit()">
+                            {% if stop.route_id %}
+                            <option value="" disabled selected>{{stop.route.name.capitalize()}}</option>
+                            {% else %}
+                            <option value="" disabled selected></option>             
+                            {% endif %}
+
+                            {% for route in routes %}
+                            <option value="{{route.id}}">{{route.name.capitalize()}}</option>
+                            {% endfor %}
+                            <option value="">None</option>
+                        </select>
+                    </form>
+                </td>
+                <td>
+                    <form class="d-flex justify-content-center" action="/delete/Stop/{{stop.id}}" method="post">
+                        <button type="submit" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z">
+                                </path>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/customers" class="btn btn-secondary btn-sm float-end">Add Stop</a>
+</div>
+
+<!-- stop form -->
+<div class="stop-form wrap">
+    <h1 class="display-6">Add a stop
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <form method="POST">
+
+        {{ stop_form.hidden_tag() }}
+      
+        {% for field in stop_form
+          if field.widget.input_type != 'hidden' %}
+        <p>
+          {{ field.label }}
+          {{ field(class_="form-control") }}
+      
+          {% for error in field.errors %}
+          <span class="form-text text-danger">{{ error }}</span>
+          {% endfor %}
+        </p>
+        {% endfor %}
+      
+        <button class="btn btn-success float-end" type="submit">Add</button>
+      
+      </form>
+</div>
+
+
+<!-- drivers table  -->
+<div class="drivers-wrap wrap">
+    <h1 class="display-3">Drivers
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <table class="table table-dark mt-3">
+        <thead>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Assignment</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for driver in drivers %}
+            <tr>
+                <td>{{driver.first_name.capitalize()}} {{driver.last_name.capitalize()}}</td>
+                <td>{{driver.phone}}</td>
+                <td>
+                    {% if driver.route != None %}
+                    {{driver.route.name.capitalize()}}
+                    {% endif %}
+                </td>
+                <td>
+                    <form class="d-flex justify-content-center" action="/delete/Driver/{{driver.id}}" method="post">
+                        <button type="submit" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z">
+                                </path>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button class="btn btn-secondary add btn-sm float-end">Create Driver</button>
+</div>
+
+<!-- driver form -->
+<div class="driver-form wrap">
+    <h1 class="display-6">Add a driver
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <form action="/create/driver" method="POST">
+
+        {{ driver_form.hidden_tag() }}
+      
+        {% for field in driver_form
+          if field.widget.input_type != 'hidden' %}
+        <p>
+          {{ field.label }}
+          {{ field(class_="form-control") }}
+      
+          {% for error in field.errors %}
+          <span class="form-text text-danger">{{ error }}</span>
+          {% endfor %}
+        </p>
+        {% endfor %}
+      
+        <button class="btn btn-success float-end" type="submit">Add</button>
+      
+      </form>
+</div>
+
+<!-- admin table -->
+<div class="admins-wrap wrap">
+    <h1 class="display-3">Administrators
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <table class="table table-dark mt-3">
+        <thead>
+            <th>Name</th>
+            <th>Phone</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for admin in admins %}
+            <tr>
+                <td>{{admin.first_name.capitalize()}} {{admin.last_name.capitalize()}}</td>
+                <td>{{admin.phone}}</td>
+                <td>
+                    <form class="d-flex justify-content-center" action="/delete/Admin/{{admin.id}}" method="post">
+                        <button type="submit" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z">
+                                </path>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button class="btn btn-secondary add btn-sm float-end">Create Admin</button>
+</div>
+
+<!-- admin form -->
+<div class="admin-form wrap">
+    <h1 class="display-6">Add Admin
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <form action="/create/admin" method="POST">
+
+        {{ driver_form.hidden_tag() }}
+      
+        {% for field in admin_form
+          if field.widget.input_type != 'hidden' %}
+        <p>
+          {{ field.label }}
+          {{ field(class_="form-control") }}
+      
+          {% for error in field.errors %}
+          <span class="form-text text-danger">{{ error }}</span>
+          {% endfor %}
+        </p>
+        {% endfor %}
+      
+        <button class="btn btn-success float-end" type="submit">Add</button>
+      
+      </form>
+</div>
+
+
+
+{% endblock %}

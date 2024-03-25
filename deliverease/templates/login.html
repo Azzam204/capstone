@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color: #7d7b9e;">
+  <a class="navbar-brand m-3" href="/">DeliverEase</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<h1 class="display-1">Login</h1>
+
+<form method="POST">
+
+  {{ form.hidden_tag() }}
+
+  {% for field in form
+    if field.widget.input_type != 'hidden' %}
+  <p>
+    {{ field.label }}
+    {{ field(class_="form-control") }}
+
+    {% for error in field.errors %}
+    <span class="form-text text-danger">{{ error }}</span>
+    {% endfor %}
+  </p>
+  {% endfor %}
+
+  <button class="btn btn-success" type="submit">Login</button>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color: #7d7b9e;">
+  <div class="container-fluid">
+    <a class="navbar-brand m-3" href="/">DeliverEase</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav float-end">
+        <li class="nav-item">
+          <a id="add-cust" class="nav-link" href="#">Create Customer</a>
+      </li>
+        <li class="nav-item">
+          <a id="customers-link" class="nav-link float-end" href="/customers">Search</a>
+        <li class="nav-item">
+          <a class="nav-link float-end" href="/logout" >Logout</a>
+        </li>
+      </ul>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<div class="search-wrap">
+  <div id="search-bar" class="container-fluid" action="/customers">
+    <form class="d-flex">
+      <input name="q" class="form-control me-2" type="search" placeholder="Search customers" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+</div>
+<br>
+<div class="container-fluid">
+    {% if customers == [] %}
+    <h3>Sorry, no customer found</h3>
+    {% else %}
+    {% for custy in customers %}
+    <div class="card" style="width: 50%; margin: auto;">
+        <div class="card-body">
+          <h5 class="card-title">{{custy.first_name.capitalize()}} {{custy.last_name.capitalize()}}
+            <form class="float-end" action="/delete/Customer/{{custy.id}}" method="post">
+              <button type="submit" class="btn btn-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z">
+                      </path>
+                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                  </svg>
+              </button>
+            </form>
+          </h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{custy.phone}}</h6>
+          <p class="card-text">{{custy.address.capitalize()}}</p>
+          <a href="/customers/stops/{{custy.id}}" class="nav-link add-stop"><b>Add Stop</b></a>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+</div>
+
+<div class="cust-form wrap">
+  <h1 class="display-6">Add a customer
+  </h1>
+  <form action="/create/customer" method="POST">
+
+      {{ form.hidden_tag() }}
+    
+      {% for field in form
+        if field.widget.input_type != 'hidden' %}
+        {% if field == form.doorman %}
+      <p>
+        {{ field.label }}
+        {{ field }}
+    
+        {% for error in field.errors %}
+        <span class="form-text text-danger">{{ error }}</span>
+        {% endfor %}
+      </p>
+      {% else %}
+      <p>
+        {{ field.label }}
+        {{ field(class_="form-control") }}
+    
+        {% for error in field.errors %}
+        <span class="form-text text-danger">{{ error }}</span>
+        {% endfor %}
+      </p>
+      {% endif %}
+      {% endfor %}
+    
+      <button class="btn btn-success float-end" type="submit">Add</button>
+    
+    </form>
+</div>
+{% endblock %}

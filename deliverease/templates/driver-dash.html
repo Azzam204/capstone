@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+
+<nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color: #7d7b9e;">
+    <a class="navbar-brand m-3" href="/">DeliverEase</a>
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link float-end m-3" href="/logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+{% if stops| length != 0 %}
+<div class="driver-route w-auto">
+    
+    <table class="table table-dark mt-3">
+        <thead>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Status</th>
+        </thead>
+        <tbody>
+            {% for stop in stops %}
+            <tr>
+                <td>{{stop.customer.first_name.capitalize()}} {{stop.customer.last_name.capitalize()}}</td>
+                <td>{{stop.customer.phone}}</td>
+                <td>{{stop.customer.address.capitalize()}}</td>
+                <td>{{stop.status.capitalize()}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form action="/driver/opt_route">
+        <button class="btn btn-success float-end driver-start">Optimize</button>
+    </form>
+</div>
+{% else %}
+<h1 class="display-3">No stops yet!
+</h1>
+{% endif %}
+{% endblock %}

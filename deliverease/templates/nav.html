@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+
+<!-- <nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color: #beb9ff;">
+    <a class="navbar-brand m-3" href="/">Dashboard</a>
+    <ul class="navbar-nav">
+      <li id="routes-link" class="nav-item">
+        <a class="nav-link py-0 px-1" href="#">Routes</a>
+      </li>
+      <li id="stops-link" class="nav-item">
+        <a class="nav-link py-0 px-1" href="#">Stops</a>
+      </li>
+      <li id="customers-link" class="nav-item">
+        <a class="nav-link py-0 px-1" href="/customers">Customers</a>
+      </li>
+      <li id="drivers-link" class="nav-item">
+        <a class="nav-link py-0 px-1" href="#">Drivers</a>
+      </li>
+    </ul>
+  </nav> -->
+
+<nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color: #7d7b9e;">
+  <div class="container-fluid">
+    <a class="navbar-brand m-3" href="/">DeliverEase</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav float-end">
+        <li class="nav-item">
+          <a id="routes-link" class="nav-link" href="#">Routes</a>
+        </li>
+        <li class="nav-item">
+          <a id="stops-link" class="nav-link" href="#">Stops</a>
+        </li>
+        <li class="nav-item">
+          <a id="drivers-link" class="nav-link" href="#" >Drivers</a>
+        </li>
+        <li class="nav-item">
+          <a id="customers-link" class="nav-link" href="/customers">Customers</a>
+        </li>
+        <li class="nav-item">
+          <a id="admin-link" class="nav-link" href="#">Administrators</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout" >Logout</a>
+        </li>
+      </ul>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}{% endblock %}

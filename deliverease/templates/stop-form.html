@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+
+<nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color: #7d7b9e; font-weight: 500;">
+    <a class="navbar-brand m-3" href="/">DeliverEase</a>
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="/customers">Customers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link float-end" href="/logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">{{custy.first_name.capitalize()}} {{custy.last_name.capitalize()}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{custy.phone}}</h6>
+        <p class="card-text">{{custy.address.capitalize()}}</p>
+    </div>
+</div>
+<br>
+<div class="stop-form wrap">
+    <h1 class="display-6">Add a stop
+        <button class="btn float-end close" style="color: rgb(119, 119, 119);">x</button>
+    </h1>
+    <form method="POST">
+
+        {{ stop_form.hidden_tag() }}
+      
+        {% for field in stop_form
+          if field.widget.input_type != 'hidden' %}
+        <p>
+          {{ field.label }}
+          {{ field(class_="form-control") }}
+      
+          {% for error in field.errors %}
+          <span class="form-text text-danger">{{ error }}</span>
+          {% endfor %}
+        </p>
+        {% endfor %}
+      
+        <button class="btn btn-success float-end" type="submit">Add</button>
+      
+      </form>
+</div>
+{% endblock %}
