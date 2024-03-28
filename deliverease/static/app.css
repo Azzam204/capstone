@@ -13,3 +13,6 @@ nav {
     width: auto;
 }
 
+body {
+    background-color: rgb(245, 236, 225) !important;
+}

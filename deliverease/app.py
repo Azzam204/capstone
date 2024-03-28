@@ -101,12 +101,22 @@ def login():
 
     return render_template('login.html', form=form)
 
+
+
+########################################################################
+# logout route
+
+
 @app.route('/logout')
 def logout():
     """ Handle logout of user """
     do_logout()
     flash('Signed out successfully.', 'success')
     return redirect('/login')
+
+
+########################################################################
+# Admin and Driver dashboards
 
 
 @app.route('/admin/dashboard')
@@ -205,50 +215,97 @@ def find_and_create_cust():
 
     return redirect('/')
 
-@app.route('/create/route', methods = ["POST"])
-def create_route():
-    """add route to db"""
-    form = RouteForm()
+########################################################################
+# creation routes
 
-    if form.validate_on_submit():
-        new_route = Route(name = form.name.data.lower())
-        db.session.add(new_route)
-        db.session.commit()
+@app.route('/create/<model>', methods = ['POST'])
+def handle_create(model):
+    """ creates routes, stops, customers, drivers, admins """
+
+    if model == 'driver':
+
+        form = DriverForm()
+
+        if form.validate_on_submit():
+            new_driver = Driver.create(form.first_name.data.lower(),
+                                    form.last_name.data.lower(),
+                                    form.phone.data,
+                                    form.username.data.lower(),
+                                    form.password.data)
+            db.session.commit()
+        
+        return redirect('/')
     
-    return redirect('/admin/dashboard')
+    if model == 'admin':
 
+        form = AdminForm()
 
-@app.route('/create/driver', methods = ['POST'])
-def create_driver():
-    """add new driver to db"""
+        if form.validate_on_submit():
+            new_admin = Admin.create(form.first_name.data.lower(),
+                                    form.last_name.data.lower(),
+                                    form.phone.data,
+                                    form.username.data.lower(),
+                                    form.password.data)
+            db.session.commit()
 
-    form = DriverForm()
-
-    if form.validate_on_submit():
-        new_driver = Driver.create(form.first_name.data.lower(),
-                                   form.last_name.data.lower(),
-                                   form.phone.data,
-                                   form.username.data.lower(),
-                                   form.password.data)
-        db.session.commit()
+        return redirect('/')
     
-    return redirect('/')
+    if model == 'customer':
 
-@app.route('/create/admin', methods=['POST'] )
-def create_admin():
-    """add admin to db"""
+        form = CustomerForm()
 
-    form = AdminForm()
+        if form.validate_on_submit():
+            new_cust = Customer.create(form.first_name.data.lower(),
+                                    form.last_name.data.lower(),
+                                    form.address.data.lower(),
+                                    form.phone.data,
+                                    form.email.data.lower(),
+                                    form.doorman.data)
+            db.session.commit()
+        
+        return redirect(f'/customers?q={form.first_name.data}')
+    
+    if model == 'route':
 
-    if form.validate_on_submit():
-        new_admin = Admin.create(form.first_name.data.lower(),
-                                   form.last_name.data.lower(),
-                                   form.phone.data,
-                                   form.username.data.lower(),
-                                   form.password.data)
+        form = RouteForm()
+
+        if form.validate_on_submit():
+            new_route = Route(name = form.name.data.lower())
+            db.session.add(new_route)
+            db.session.commit()
+        
+        return redirect('/admin/dashboard')
+    
+
+
+@app.route('/customers/stops/<custy_id>', methods=["POST","GET"])
+def add_stop(custy_id):
+    """create new stop"""
+
+    stop_form = StopForm()
+    custy = Customer.query.get(custy_id)
+
+    if stop_form.validate_on_submit():
+        if stop_form.route_id.data == '0':
+            new_stop = Stop(customer_id=custy_id,
+                            start_time=stop_form.start_time.data,
+                            end_time=stop_form.end_time.data)
+        else:
+            new_stop = Stop(customer_id=custy_id,
+                            start_time=stop_form.start_time.data,
+                            end_time=stop_form.end_time.data,
+                            route_id=stop_form.route_id.data)
+            
+        db.session.add(new_stop)
         db.session.commit()
+        return redirect('/customers')
 
-    return redirect('/')
+    return render_template('stop-form.html', custy=custy, stop_form=stop_form)
+
+
+
+########################################################################
+# in table selection routes
 
 @app.route('/select/driver/<route_id>', methods = ['POST'])
 def select_driver(route_id):
@@ -293,46 +350,27 @@ def change_status(stop_id):
 
     return redirect('/driver/opt_route')
 
-@app.route('/customers/stops/<custy_id>', methods=["POST","GET"])
-def add_stop(custy_id):
-    """create new stop"""
 
-    stop_form = StopForm()
-    custy = Customer.query.get(custy_id)
+# @app.route('/create/customer', methods =['POST'])
+# def create_customer():
+#     """ create customer """
 
-    if stop_form.validate_on_submit():
-        if stop_form.route_id.data == '0':
-            new_stop = Stop(customer_id=custy_id,
-                            start_time=stop_form.start_time.data,
-                            end_time=stop_form.end_time.data)
-        else:
-            new_stop = Stop(customer_id=custy_id,
-                            start_time=stop_form.start_time.data,
-                            end_time=stop_form.end_time.data,
-                            route_id=stop_form.route_id.data)
-            
-        db.session.add(new_stop)
-        db.session.commit()
-        return redirect('/customers')
+#     form = CustomerForm()
 
-    return render_template('stop-form.html', custy=custy, stop_form=stop_form)
-
-@app.route('/create/customer', methods =['POST'])
-def create_customer():
-    """ create customer """
-
-    form = CustomerForm()
-
-    if form.validate_on_submit():
-        new_cust = Customer.create(form.first_name.data.lower(),
-                                   form.last_name.data.lower(),
-                                   form.address.data.lower(),
-                                   form.phone.data,
-                                   form.email.data.lower(),
-                                   form.doorman.data)
-        db.session.commit()
+#     if form.validate_on_submit():
+#         new_cust = Customer.create(form.first_name.data.lower(),
+#                                    form.last_name.data.lower(),
+#                                    form.address.data.lower(),
+#                                    form.phone.data,
+#                                    form.email.data.lower(),
+#                                    form.doorman.data)
+#         db.session.commit()
     
-    return redirect(f'/customers?q={form.first_name.data}')
+#     return redirect(f'/customers?q={form.first_name.data}')
+
+########################################################################
+# Handle route view and remove stop from route
+
 
 @app.route('/route/<route_id>')
 def show_route(route_id):
@@ -355,6 +393,8 @@ def remove_from_route(route_id,stop_id):
         return redirect(f'/route/{route_id}')
     
     return redirect('/')
+
+######################################################################### Handle delete
 
 @app.route('/delete/<model>/<id>', methods=['POST'])
 def handle_delete(model,id):

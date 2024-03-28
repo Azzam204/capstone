@@ -37,7 +37,7 @@
     <h3>Sorry, no customer found</h3>
     {% else %}
     {% for custy in customers %}
-    <div class="card" style="width: 50%; margin: auto;">
+    <div class="card" style="width: 70%; margin: auto;">
         <div class="card-body">
           <h5 class="card-title">{{custy.first_name.capitalize()}} {{custy.last_name.capitalize()}}
             <form class="float-end" action="/delete/Customer/{{custy.id}}" method="post">
@@ -50,6 +50,7 @@
               </button>
             </form>
           </h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{custy.email}}</h6>
           <h6 class="card-subtitle mb-2 text-muted">{{custy.phone}}</h6>
           <p class="card-text">{{custy.address.capitalize()}}</p>
           <a href="/customers/stops/{{custy.id}}" class="nav-link add-stop"><b>Add Stop</b></a>

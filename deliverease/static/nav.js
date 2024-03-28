@@ -1,9 +1,13 @@
+// vars for nav buttons
+
 const $routesLink = $('#routes-link')
 const $stopsLink = $('#stops-link')
 const $driversLink = $('#drivers-link')
 const $customerslink = $('#customers-link')
 const $adminsLink = $('#admin-link')
 const $addCust = $('#add-cust')
+
+// array of nav buttons
 
 const navlinks = [
     $routesLink,
@@ -12,6 +16,8 @@ const navlinks = [
     $customerslink,
     $adminsLink
 ]
+
+// nav link event listeners
 
 $routesLink.on('click', function() {
     hideAll(forms)
