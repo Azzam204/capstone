@@ -90,7 +90,11 @@
             <th>Phone</th>
             <th>Address</th>
             <th>Route</th>
-            <th></th>
+            <th>
+                <form action="/delete/stops" method="post">
+                    <button class="btn btn-secondary btn-sm float-end" type="submit">Delete All</button>
+                </form>
+            </th>
         </thead>
         <tbody>
             {% for stop in stops %}

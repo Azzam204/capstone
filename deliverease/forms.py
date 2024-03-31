@@ -1,5 +1,6 @@
 
 from flask_wtf import FlaskForm
+from datetime import time
 from wtforms import StringField, PasswordField, IntegerField, TextAreaField, TimeField, DateField, BooleanField, SelectField, RadioField
 from wtforms.validators import DataRequired, InputRequired, Email, Length, ValidationError, Optional, NumberRange
 from models import *
@@ -55,6 +56,8 @@ class StopForm(FlaskForm):
     def __init__(self):
         super(StopForm, self).__init__()
         self.route_id.choices =[('0','')]+[(r.id, r.name) for r in Route.query.all()]
+        self.start_time.data = time(18)
+        self.end_time.data = time(21)
 
 
 

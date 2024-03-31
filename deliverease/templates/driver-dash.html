@@ -16,7 +16,8 @@
 {% block content %}
 {% if stops| length != 0 %}
 <div class="driver-route w-auto">
-    
+    <h1 class="display-3">{{stops[0].route.name.capitalize()}}
+    </h1>
     <table class="table table-dark table-striped mt-3">
         <thead>
             <th>Name</th>

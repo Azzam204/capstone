@@ -1,3 +1,4 @@
+import os
 import requests
 from api import *
 from flask import Flask, render_template, request, flash, redirect, session, g
@@ -14,7 +15,9 @@ driver_type =  "<class 'models.Driver'>"
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///deliverease'
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    os.environ.get('DATABASE_URL', 'postgresql:///deliverease'))
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY']= 'fartnoise'
@@ -80,7 +83,10 @@ def login():
 
     form = LoginForm()
 
-    if form.validate_on_submit():
+    if g.user:
+        return redirect('/')
+
+    elif form.validate_on_submit():
         admin = Admin.authenticate(form.username.data.lower(),
                                    form.password.data)
         
@@ -122,7 +128,7 @@ def logout():
 @app.route('/admin/dashboard')
 def show_admin_dash():
     
-    if g.user:
+    if g.user and session[USER_TYPE] == admin_type:
         drivers = Driver.query.all()
         routes = Route.query.all()
         stops = Stop.query.order_by(desc(Stop.route_id)).all()
@@ -145,24 +151,27 @@ def show_admin_dash():
                             driver_form=driver_form,
                             stop_form=stop_form,
                             admin_form=admin_form)
+    
+    flash("Access unauthorized.", "danger")
     return redirect('/')
 
 @app.route('/driver/dashboard')
 def show_driver_dash():
 
-    if g.user:
+    if g.user and session[USER_TYPE] == driver_type:
 
         route_id = g.user.route_id
         stops = Stop.query.filter_by(route_id = route_id).order_by(desc(Stop.status)).all()
 
         return render_template('driver-dash.html', stops=stops)
-
+    
+    flash("Access unauthorized.", "danger")
     return redirect('/')    
 
 @app.route('/driver/opt_route')
 def show_optomized_route():
 
-    if g.user:
+    if g.user and session[USER_TYPE] == driver_type:
 
         route = Route.query.get(g.user.route_id)
 
@@ -192,7 +201,7 @@ def show_optomized_route():
 @app.route('/customers')
 def find_and_create_cust():
 
-    if g.user:
+    if g.user and session[USER_TYPE] == admin_type:
         form = CustomerForm()
         
         search = request.args.get('q')
@@ -211,8 +220,8 @@ def find_and_create_cust():
             return render_template('customers.html',
                                    customers=customers,
                                    form=form)
-
-
+        
+    flash("Access unauthorized.", "danger")
     return redirect('/')
 
 ########################################################################
@@ -350,24 +359,6 @@ def change_status(stop_id):
 
     return redirect('/driver/opt_route')
 
-
-# @app.route('/create/customer', methods =['POST'])
-# def create_customer():
-#     """ create customer """
-
-#     form = CustomerForm()
-
-#     if form.validate_on_submit():
-#         new_cust = Customer.create(form.first_name.data.lower(),
-#                                    form.last_name.data.lower(),
-#                                    form.address.data.lower(),
-#                                    form.phone.data,
-#                                    form.email.data.lower(),
-#                                    form.doorman.data)
-#         db.session.commit()
-    
-#     return redirect(f'/customers?q={form.first_name.data}')
-
 ########################################################################
 # Handle route view and remove stop from route
 
@@ -381,6 +372,7 @@ def show_route(route_id):
         return render_template('route.html',
                                route=route)
     
+    flash("Access unauthorized.", "danger")
     return redirect('/')
 
 @app.route('/route/<route_id>/<stop_id>', methods = ['POST'])
@@ -414,6 +406,15 @@ def handle_delete(model,id):
             return redirect('/customers')
 
 
+        db.session.commit()
+    
+    return redirect('/')
+
+@app.route('/delete/stops', methods =['POST'])
+def delete_all_stops():
+
+    if g.user:
+        db.session.query(Stop).delete()
         db.session.commit()
     
     return redirect('/')
