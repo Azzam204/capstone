@@ -8,7 +8,6 @@ The site can be reached at https://deliverease.onrender.com
 Username: Juan204
 Password : Password
 
-Sure, here's a description of a delivery website with those features:
 
 **Title: DeliverEase**
 
